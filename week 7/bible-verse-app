@@ -1,0 +1,70 @@
+import { useState } from "react";
+
+const API_BASE_URL = "https://labs.bible.org/api_web_service";
+
+function RandomVerse() {
+  const [verse, setVerse] = useState("");
+
+  const fetchRandomVerse = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}?passage=random&type=json`);
+      const data = await response.json();
+      setVerse(`${data[0].bookname} ${data[0].chapter}:${data[0].verse} - ${data[0].text}`);
+    } catch (error) {
+      setVerse("Failed to fetch verse");
+    }
+  };
+
+  return (
+    <div className="p-4 border rounded shadow">
+      <h2 className="text-lg font-bold">Random Bible Verse</h2>
+      <p>{verse || "Click to fetch a verse."}</p>
+      <button className="bg-blue-500 text-white px-4 py-2 mt-2 rounded" onClick={fetchRandomVerse}>
+        Get Random Verse
+      </button>
+    </div>
+  );
+}
+
+function SpecificVerse() {
+  const [verse, setVerse] = useState("");
+  const [input, setInput] = useState("John 3:16");
+
+  const fetchSpecificVerse = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}?passage=${input}&type=json`);
+      const data = await response.json();
+      setVerse(`${data[0].bookname} ${data[0].chapter}:${data[0].verse} - ${data[0].text}`);
+    } catch (error) {
+      setVerse("Failed to fetch verse");
+    }
+  };
+
+  return (
+    <div className="p-4 border rounded shadow mt-4">
+      <h2 className="text-lg font-bold">Search for a Specific Verse</h2>
+      <input
+        className="border p-2 rounded w-full mt-2"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="Enter reference (e.g., John 3:16)"
+      />
+      <button className="bg-green-500 text-white px-4 py-2 mt-2 rounded" onClick={fetchSpecificVerse}>
+        Get Verse
+      </button>
+      <p className="mt-2">{verse}</p>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div className="p-6 max-w-lg mx-auto text-center">
+      <h1 className="text-2xl font-bold">Bible Verse Finder</h1>
+      <RandomVerse />
+      <SpecificVerse />
+    </div>
+  );
+}
+
+export default App;
